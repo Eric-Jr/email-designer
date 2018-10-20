@@ -3,15 +3,17 @@
 		<div id="work-space-nav">
 			<button 
 				v-for="tab in tabs"
-				v-bind:key="tab"
+				v-bind:key="tab.id"
 				v-bind:class="['tab-button', { active: currentTab === tab }]"
 				v-on:click="currentTab = tab"
 			>{{ tab }}</button>
 		</div>
-		<div 
-			v-bind:is="currentTabComponent"
-			class="inner"
-		></div>
+		<keep-alive>
+			<component 
+				v-bind:is="currentTabComponent"
+				class="inner">
+			</component>
+		</keep-alive>
 		<nav></nav>
 	</section>
 </template>
@@ -25,13 +27,44 @@
 		data () {
 			return {
 				currentTab: 'content',
-				tabs: ['settings','content','social']
+				tabs: ['settings','content','social'],
+				color: 'inherit',
 			}
 		},
-		components: {
-			WorkSpaceContent,
-			WorkSpaceSettings,
-			WorkSpaceSocial
+		components:
+		{
+			WorkSpaceContent :
+			{
+				render : function(createElement)
+				{
+					return createElement(
+						WorkSpaceContent,
+						{
+							style: {
+								color: this.$parent.$data.color
+							}
+						},
+					)
+				},
+			},
+			WorkSpaceSettings :
+			{
+				render : function(createElement)
+				{
+					return createElement(
+						WorkSpaceSettings,
+					)
+				},
+			},
+			WorkSpaceSocial :
+			{
+				render : function(createElement)
+				{
+					return createElement(
+						WorkSpaceSocial,
+					)
+				},
+			},
 		},
 		computed: {
 			currentTabComponent: function() {
@@ -45,13 +78,24 @@
 #workspace
 {
 	-webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-    -khtml-user-select: none; /* Konqueror HTML */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* Internet Explorer/Edge */
-    user-select: none;
+	-webkit-user-select: none; /* Safari */
+	-khtml-user-select: none; /* Konqueror HTML */
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* Internet Explorer/Edge */
+	user-select: none;
 
-    #work-space-nav {
+	.inner {
+		max-height: 100%;
+		overflow-y: scroll;
+		overflow-x: hidden;
+		position: relative;
+		
+		table {
+			position: relative;
+		}
+	}
+
+	#work-space-nav {
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: space-evenly;
@@ -77,39 +121,32 @@
 		}
 	}
 
-    .inner {
-        max-height: 100%;
-        overflow-y: scroll;
-        overflow-x: none;
-        position: relative;
-        
-        table {
-            position: relative;
-        }
-    }
+	h2 {
+		text-align: center;
+	}
 
-    *[data-state="drag"] {
-        cursor: move;
-        font-family: sans-serif;
-        margin-bottom: 15px;
-        transition: 0.2s all;
-        position: relative;
+	*[data-state="drag"] {
+		cursor: move;
+		font-family: sans-serif;
+		margin-bottom: 15px;
+		transition: 0.2s all;
+		position: relative;
 
-        & * {
-            pointer-events: none;
-        }
+		& * {
+			pointer-events: none;
+		}
 
-        &:before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-        }
+		&:before {
+			content: '';
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			z-index: 2;
+		}
 
-        &:hover {
-            box-shadow: 0 0 50px rbga(0,0,0,0.9);
-        }
-    }
+		&:hover {
+			box-shadow: 0 0 50px rbga(0,0,0,0.9);
+		}
+	}
 }
 </style>

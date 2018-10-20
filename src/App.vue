@@ -3,7 +3,12 @@
         <!-- BEGIN : DISPLAY AREA -->
         <section id="displayarea">
             <router-view/>
-            <span class="resize"></span>
+            <span 
+                v-on:mousedown="resizeMouseDown"
+                v-on:drag="resizeDrag"
+                v-on:dragend="resizeDragEnd"
+                draggable="true"
+                class="resize"></span>
         </section>
         <!-- END : DISPLAY AREA -->
         <!-- BEGIN : WORK SPACE -->
@@ -23,6 +28,82 @@ export default {
     data () {
         return {
 
+        }
+    },
+    methods: {
+        resizeMouseDown : function(evt)
+        {
+            evt.target.mouseDown = true;
+        },
+        resizeDrag : function(evt)
+        {
+            const maxResize = window.innerWidth - 600;
+
+            if (evt.target.mouseDown &&
+                evt.target.parentNode.offsetWidth <= maxResize) 
+            {
+                evt.target.parentNode.style.width = evt.pageX + 'px';
+                evt.target.parentNode.style.flex = '0 0 auto';
+                this.setMinResize(evt.target.parentNode);
+                this.setMaxResize(evt.target.parentNode);
+                this.setMobileView(evt.target.parentNode);
+            }
+        },
+        resizeDragLeave : function(evt)
+        {
+            const maxResize = window.innerWidth - 600;
+
+            if (evt.target.mouseDown &&
+                evt.target.parentNode.offsetWidth <= maxResize) 
+            {
+                evt.target.mouseDown = false;
+                this.setMinResize(evt.target.parentNode);
+                this.setMaxResize(evt.target.parentNode);
+                this.setMobileView(evt.target.parentNode);
+            }
+        },
+        resizeDragEnd : function(evt)
+        {
+            const maxResize = window.innerWidth - 600;
+
+            if (evt.target.mouseDown &&
+                evt.target.parentNode.offsetWidth <= maxResize) 
+            {
+                evt.target.parentNode.style.width = evt.pageX + 'px';
+                evt.target.mouseDown = false;
+                this.setMinResize(evt.target.parentNode);
+                this.setMaxResize(evt.target.parentNode);
+                this.setMobileView(evt.target.parentNode);
+            }
+        },
+        setMinResize : function(el)
+        {
+            const minResize = 350;
+
+            if (el.offsetWidth < minResize)
+            {
+                el.style.width = minResize + 'px';
+            }
+        },
+        setMaxResize : function(el)
+        {
+            const maxResize = window.innerWidth - 600;
+
+            if (el.offsetWidth > maxResize)
+            {
+                el.style.width = maxResize + 'px';
+            }
+        },
+        setMobileView : function(el)
+        {
+            if (el.offsetWidth < 650) 
+            {
+                el.classList.add('mobile');
+            } 
+            else if (el.offsetWidth >= 650)
+            {
+                el.classList.remove('mobile');
+            }
         }
     }
 }
@@ -47,12 +128,12 @@ body
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
     color: #2c3e50;
     display: flex;
     flex-flow: row;
     justify-content: space-between;
     overflow: hidden;
+    box-sizing: border-box;
 
     & > * {
         flex: 1 1 50%;
@@ -83,8 +164,8 @@ body
         position: absolute;
         top: 0;
         right: 0;
-        transform: translateX(50%);
-        z-index: 2;
+        transform: translateX(60%);
+        z-index: 3;
 
         &:hover {
             cursor: col-resize;

@@ -1,7 +1,7 @@
 <template>
 	<table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto;">
-        <p>social.</p>
-    </table>
+		<p>social.</p>
+	</table>
 </template>
 
 <script>
