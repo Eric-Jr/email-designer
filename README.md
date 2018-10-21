@@ -1,6 +1,6 @@
 # email-designer
 
-> A single page application for building emails. Emails are built using the [Cerberus Template](https://tedgoas.github.io/Cerberus/).
+> A small application for creating emails. Based on the responsive [Cerberus Templates](https://tedgoas.github.io/Cerberus/).
 
 ## Build Setup
 
