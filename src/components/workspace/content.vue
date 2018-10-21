@@ -1,16 +1,21 @@
 <template>
-	<div> 
-		<component 
+	<div>
+		<div 
 			v-for="component in components"
-			v-on:dragstart.native="ondragstart"
-			v-on:dragend.native="ondragend"
-			v-bind:key="component.id"
-			:is="component.name"
-			draggable="true"
-			data-state="drag"
-			data-method="copy"
-			class="email-container">
-		</component>
+			:key="component.name"
+			class="email-component">
+			<h2>{{ component.fullname }}</h2>
+			<component 
+				v-on:dragstart.native="ondragstart"
+				v-on:dragend.native="ondragend"
+				:key="component.name"
+				:data-type="component.name"
+				:is="component.name"
+				draggable="true"
+				data-state="drag"
+				data-method="copy">
+			</component>
+		</div>
 	</div>
 </template>
 
@@ -102,7 +107,8 @@ export default {
 			}
 
 			// clone element and store at root
-			this.$root.dragged = evt.target.querySelector('table').cloneNode(true);
+			this.$root.dragged = evt.target.cloneNode(true);
+			this.$parent.$children.push(this);
 
 			// show dropzones
 			document.querySelectorAll('*[data-state="drop"]').forEach(function(dropzone) {

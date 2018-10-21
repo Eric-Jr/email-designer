@@ -4,7 +4,9 @@
 			v-on:dragstart="moveStart"
 			v-on:dragend="moveEnd"
 			data-state="move" draggable="true">Move</span>
-		<span>Edit</span>
+		<span
+			v-on:click="editBlock"
+		>Edit</span>
 		<span
 			v-on:click="deleteBlock"
 		>Delete</span>
@@ -24,7 +26,7 @@
 				this.$root.dragged = evt.target.parentNode.parentNode;
 
 				let dt = evt.dataTransfer;
-				
+
 				if (dt.setDragImage && dt.setData)
 				{
 					// removes ghost image on cursor (Firefox/Chrome)
@@ -46,16 +48,25 @@
 					dropzone.classList.remove('reveal');
 				});
 			},
+			editBlock : function(evt)
+			{
+				
+			},
 			deleteBlock : function(evt)
 			{
+				let vm = this;
+
 				// grab currently evaluated table
-				let el = evt.target.parentNode.parentNode;
-				// hide controls
-				evt.target.parentNode.style.display = 'none';
-				// remove controls from table
-				this.$parent.$el.appendChild(evt.target.parentNode);
-				// delete table
-				el.remove();
+				let id = evt.target.parentNode.parentNode.dataset.id;
+
+				// remove vnode from virtual dom
+				vm.$parent.$data.components.splice(
+					id, // select vnode index
+					1, // delete only this node
+				);
+
+				// re-index vnode array
+				vm.$parent.reIndex();
 			}
 		}
 	}

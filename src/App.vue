@@ -3,27 +3,25 @@
 		v-on:mousemove="resizeDrag"
 		v-on:mouseup="resizeEnd"
 		id="app">
+		<!-- <router-view/> -->
 		<!-- BEGIN : DISPLAY AREA -->
-		<section id="displayarea">
-			<router-view/>
-			<span 
-				v-on:mousedown.stop="resizeStart"
-				class="resize"></span>
-		</section>
+		<display-area></display-area>
 		<!-- END : DISPLAY AREA -->
 		<!-- BEGIN : WORK SPACE -->
-		<workspace></workspace>
+		<work-space></work-space>
 		<!-- END : WORK SPACE -->
 	</div>
 </template>
 
 <script>
-import workspace from './components/workspace/work-space.vue'
+import DisplayArea from './components/display/display-area'
+import WorkSpace from './components/workspace/work-space'
 
 export default {
 	name: 'App',
 	components : {
-		workspace
+		WorkSpace,
+		DisplayArea,
 	},
 	data () {
 		return {
@@ -31,32 +29,26 @@ export default {
 		}
 	},
 	methods: {
-		resizeStart : function(evt)
-		{
-			evt.stopImmediatePropagation();
-			this.mouseDown = true;
-			this.resizeEl = evt.target.parentNode;
-		},
 		resizeDrag : function(evt)
 		{
-			if (this.resizeEl)
+			if (this.$root.resizeEl)
 			{
 				const maxResize = window.innerWidth - 600;
 
-				if (this.mouseDown &&
-					this.resizeEl.offsetWidth <= maxResize) 
+				if (this.$root.mouseDown &&
+					this.$root.resizeEl.offsetWidth <= maxResize) 
 				{
-					this.resizeEl.style.width = evt.pageX + 'px';
-					this.resizeEl.style.flex = '0 0 auto';
-					this.setMinResize(this.resizeEl);
-					this.setMaxResize(this.resizeEl);
-					this.setMobileView(this.resizeEl);
+					this.$root.resizeEl.style.width = evt.pageX + 'px';
+					this.$root.resizeEl.style.flex = '0 0 auto';
+					this.setMinResize(this.$root.resizeEl);
+					this.setMaxResize(this.$root.resizeEl);
+					this.setMobileView(this.$root.resizeEl);
 				}
 			}
 		},
 		resizeEnd : function(evt)
 		{
-			this.mouseDown = false;
+			this.$root.mouseDown = false;
 		},
 		setMinResize : function(el)
 		{
@@ -86,7 +78,7 @@ export default {
 			{
 				el.classList.remove('mobile');
 			}
-		}
+		},
 	}
 }
 </script>

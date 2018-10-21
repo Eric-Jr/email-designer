@@ -1,55 +1,107 @@
 <template>
-	<div class="inner">
-		<div width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #222222;">
-			<center 
-				v-on:dragenter="ondragenter"
-				v-on:dragover="ondragover"
-				v-on:dragleave="ondragleave"
-				v-on:drop="ondrop"
-				data-state='drop'
-				style="width: 100%; background-color: #222222;" class="initial-display">
-			<!--[if mso | IE]>
-			<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #222222;">
-			<tr>
-			<td>
-			<![endif]-->
+	<section id="displayarea">
+		<div class="inner">
+			<div width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #222222;">
+				<email-display 
+					v-on:dragenter.native="ondragenter"
+					v-on:dragover.native="ondragover"
+					v-on:dragleave.native="ondragleave"
+					v-on:drop.native="ondrop"
+					data-state='drop'
+					style="width: 100%; background-color: #222222;" class="initial-display">
+				<!--[if mso | IE]>
+				<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #222222;">
+				<tr>
+				<td>
+				<![endif]-->
 
-				<!-- Visually Hidden Preheader Text : BEGIN -->
-				<div contenteditable="true" style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
-					(Optional) This text will appear in the inbox preview, but not the email body. It can be used to supplement the email subject line or even summarize the email's contents. Extended text preheaders (~490 characters) seems like a better UX for anyone using a screenreader or voice-command apps like Siri to dictate the contents of an email. If this text is not included, email clients will automatically populate it using the text (including image alt text) at the start of the email's body.
-				</div>
-				<!-- Visually Hidden Preheader Text : END -->
+					<!-- Visually Hidden Preheader Text : BEGIN -->
+					<div contenteditable="true" style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
+						(Optional) This text will appear in the inbox preview, but not the email body. It can be used to supplement the email subject line or even summarize the email's contents. Extended text preheaders (~490 characters) seems like a better UX for anyone using a screenreader or voice-command apps like Siri to dictate the contents of an email. If this text is not included, email clients will automatically populate it using the text (including image alt text) at the start of the email's body.
+					</div>
+					<!-- Visually Hidden Preheader Text : END -->
 
-				<!-- Create white space after the desired preview text so email clients don’t pull other distracting text into the inbox preview. Extend as necessary. -->
-				<!-- Preview Text Spacing Hack : BEGIN -->
-				<div style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
-					&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
-				</div>
-				<!-- Preview Text Spacing Hack : END -->
+					<!-- Create white space after the desired preview text so email clients don’t pull other distracting text into the inbox preview. Extend as necessary. -->
+					<!-- Preview Text Spacing Hack : BEGIN -->
+					<div style="display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;">
+						&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;
+					</div>
+					<!-- Preview Text Spacing Hack : END -->
+					
+					<!-- BEGIN : Render Email Components -->
+					<div v-if="this.$data.components[0]">
+						<component 
+							v-for="component in this.$data.components"
+							v-on:mouseenter.native="showControls"
+							v-on:mouseleave.native="hideControls"
+							v-on:drop.native="insertComponent"
+							:key="'email-component-'+component.id"
+							:data-id="component.id"
+							:data-type="component.type"
+							:is="component.type"
+							class="email-container"
+							data-method="move">
+						</component>
+					</div>
+					<!-- END : Render Email Components -->
 
-			<!--[if mso | IE]>
-			</td>
-			</tr>
-			</table>
-			<![endif]-->
-			</center>
+				<!--[if mso | IE]>
+				</td>
+				</tr>
+				</table>
+				<![endif]-->
+				</email-display>
+			</div>
+			<table-controls></table-controls>
 		</div>
-		<table-controls></table-controls>
-	</div>
+		<span 
+			v-on:mousedown.stop="resizeStart"
+			class="resize"></span>
+	</section>
 </template>
 
 <script>
 	import TableControls from './table-controls'
+	import EmailHeader from '../email-components/email-header'
+	import HeroImage from '../email-components/hero-image'
+	import OneColumnTextButton from '../email-components/one-column-text-button'
+	import BackgroundImageText from '../email-components/background-image-text'
+	import TwoEvenColumns from '../email-components/two-even-columns'
+	import ThreeEvenColumns from '../email-components/three-even-columns'
+	import ThumbnailLeftTextRight from '../email-components/thumbnail-left-text-right'
+	import ThumbnailRightTextLeft from '../email-components/thumbnail-right-text-left'
+	import OneColumnText from '../email-components/one-column-text'
+	import ClearSpacer from '../email-components/clear-spacer'
 
 	export default {
 		data () {
 			return {
-				
+				components : [],
 			}
 		},
 		components : 
 		{
 			TableControls,
+			EmailDisplay :
+			{
+				render : function(createElement)
+				{
+					return createElement(
+						'center',
+						this.$slots.default
+					);
+				}
+			},
+			EmailHeader,
+			HeroImage,
+			OneColumnTextButton,
+			BackgroundImageText,
+			TwoEvenColumns,
+			ThreeEvenColumns,
+			ThumbnailLeftTextRight,
+			ThumbnailRightTextLeft,
+			OneColumnText,
+			ClearSpacer,
 		},
 		methods : 
 		{
@@ -133,25 +185,16 @@
 				// clear highlights
 				evt.target.classList.remove('highlight');
 
-				// grab coordinates for hovered element
-				vm.$root.dragged.addEventListener('mouseenter', function(evt)
-				{
-					this.style.position = 'relative';
-					this.appendChild(vm.$children[0].$el);
-					vm.$children[0].$el.style.display = 'flex';
-				});
-
-				vm.$root.dragged.addEventListener('mouseleave', function(evt)
-				{
-					this.style.position = '';
-					vm.$children[0].$el.style.display = 'none';
-					vm.$el.appendChild(vm.$children[0].$el);
-				});
-
 				if (evt.target.dataset.state === 'drop')
 				{
-					// append elements
-					evt.target.appendChild(vm.$root.dragged);
+					// add to virtual dom tree
+					vm.$data.components.push({
+						el : vm.$root.dragged,
+						type : vm.$root.dragged.dataset.type,
+					});
+
+					// re-index vnode array
+					this.reIndex();
 
 					// Remove initial instructions
 					if (document.querySelector('.initial-display'))
@@ -159,38 +202,102 @@
 						document.querySelector('.initial-display').classList.remove('initial-display');
 					}
 				}
-
-				if (evt.target.getAttribute('class'))
-				{
-					if (evt.target.getAttribute('class').match(/email-container/g))
-					{
-						// clear highlights
-						evt.target.classList.remove('highlight-before');
-						evt.target.classList.remove('highlight-after');
-
-						// check whether user is scrolling top or bottom half
-						if (evt.offsetY < evt.target.offsetHeight / 2) {
-							// append after target
-							if (evt.target.previousElementSibling)
-							{
-								evt.target.parentNode.insertBefore(vm.$root.dragged, evt.target);
-							}
-						}
-						else
-						{
-							// append after target
-							if (evt.target.nextElementSibling)
-							{
-								evt.target.parentNode.insertBefore(vm.$root.dragged, evt.target.nextElementSibling);
-							}
-							else
-							{
-								evt.target.parentNode.appendChild(vm.$root.dragged);
-							}
-						}
-					};
-				}
 			},
+			resizeStart : function(evt)
+			{
+				evt.stopImmediatePropagation();
+				this.$root.mouseDown = true;
+				this.$root.resizeEl = evt.target.parentNode;
+			},
+			showControls : function(evt)
+			{
+				let vm = this;
+				evt.target.style.position = 'relative';
+				evt.target.appendChild(vm.$children[1].$el);
+				vm.hovered = this;
+				vm.$children[1].$el.style.display = 'flex';
+			},
+			hideControls : function(evt)
+			{
+				let vm = this;
+				vm.$children[1].$el.style.display = 'none';
+				evt.target.style.position = '';
+				vm.$el.appendChild(vm.$children[1].$el);
+			},
+			insertComponent : function(evt)
+			{
+				let vm = this;
+
+				// clear highlights
+				evt.target.classList.remove('highlight-before');
+				evt.target.classList.remove('highlight-after');
+
+				// grab vnode id
+				let id = Number(evt.target.dataset.id);
+				let vnode;
+
+				// check whether user is scrolling top or bottom half
+				if (evt.offsetY < evt.target.offsetHeight / 2) {
+					if (vm.$root.dragged.dataset.method !== 'move')
+					{
+						// append before target in virtual dom
+						vm.$data.components.splice(
+						id, // insert before this index
+						0, // don't delete any items in array
+						{
+							el : vm.$root.dragged,
+							type : vm.$root.dragged.dataset.type,
+						});
+					}
+					else
+					{
+						/*
+						** TODO:
+						** 	fix this shit
+						**/
+						// append before target in virtual dom
+						// let moveid = vm.$root.dragged.dataset.id;
+						// let cur = vm.$data.components[id];
+						// let tmp = cur;
+
+						// vm.$data.components[id] = vm.$data.components[moveid];
+					}
+				}
+				else
+				{
+					// append after target
+					if (evt.target.nextElementSibling)
+					{
+						// add to virtual dom tree
+						vm.$data.components.splice(
+						id + 1, // insert after this index
+						0, // don't delete any items in array
+						{
+							el : vm.$root.dragged,
+							type : vm.$root.dragged.dataset.type,
+						});
+					}
+					else
+					{
+						// add to virtual dom tree
+						vm.$data.components.push({
+							el : vm.$root.dragged,
+							type : vm.$root.dragged.dataset.type,
+						});
+					}
+				}
+
+				// re-index vnode array
+				this.reIndex();
+			},
+			reIndex : function()
+			{
+				this.$data.components.forEach(function(component,key)
+				{
+					component.id = key;
+					component.el.dataset.id = key;
+				})
+			}
 		},
 	}
 </script>
