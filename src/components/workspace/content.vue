@@ -91,9 +91,8 @@ export default {
 		ondragstart : function(evt)
 		{
 			let dt = evt.dataTransfer;
-			let isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
 
-			if (!isIE11)
+			if (dt.setDragImage && dt.setData)
 			{
 				// removes ghost image on cursor (Firefox/Chrome)
 				dt.setDragImage(new Image(), 0, 0);
