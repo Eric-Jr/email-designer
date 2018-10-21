@@ -1,13 +1,13 @@
 <template>
 	<div class="tab-controls">
-		<button 
-			v-on:dragstart.stop="moveStart"
-			v-on:dragend.stop="moveEnd"
-			data-state="move" draggable="true">Move</button>
-		<button>Edit</button>
-		<button
+		<span 
+			v-on:dragstart="moveStart"
+			v-on:dragend="moveEnd"
+			data-state="move" draggable="true">Move</span>
+		<span>Edit</span>
+		<span
 			v-on:click="deleteBlock"
-		>Delete</button>
+		>Delete</span>
 	</div>
 </template>
 
@@ -70,5 +70,16 @@
 	left: 0;
 	display: none;
 	width: 100%;
+
+	span
+	{
+		padding: 5px;
+		margin-right: 5px;
+		background: rgba(0,0,0,.5);
+
+		&:hover {
+			cursor: pointer;
+		}
+	}
 }
 </style>
