@@ -1,6 +1,9 @@
 <template>
 	<div class="tab-controls">
-		<button>Move</button>
+		<button 
+			v-on:dragstart.stop="moveStart"
+			v-on:dragend.stop="moveEnd"
+			data-state="move" draggable="true">Move</button>
 		<button>Edit</button>
 		<button
 			v-on:click="deleteBlock"
@@ -17,6 +20,33 @@
 		},
 		methods :
 		{
+			moveStart : function(evt) {
+				this.$root.dragged = evt.target.parentNode.parentNode;
+
+				let dt = evt.dataTransfer;
+				let isIE11 = !!window.MSInputMethodContext && !!document.documentMode;
+
+				if (!isIE11)
+				{
+					// removes ghost image on cursor (Firefox/Chrome)
+					dt.setDragImage(new Image(), 0, 0);
+
+					// initiates drag events (Firefox only)
+					dt.setData('key', '');
+				}
+
+				// reveal dropzones
+				document.querySelectorAll('*[data-state="drop"],*[data-state="append"]').forEach(function(dropzone) {
+					dropzone.classList.add('reveal');
+				});
+			},
+			moveEnd : function(evt)
+			{
+				// hide dropzones
+				document.querySelectorAll('*[data-state="drop"],*[data-state="append"]').forEach(function(dropzone) {
+					dropzone.classList.remove('reveal');
+				});
+			},
 			deleteBlock : function(evt)
 			{
 				// grab currently evaluated table
@@ -25,8 +55,6 @@
 				evt.target.parentNode.style.display = 'none';
 				// remove controls from table
 				this.$parent.$el.appendChild(evt.target.parentNode);
-				// delete insert block
-				el.nextElementSibling.remove();
 				// delete table
 				el.remove();
 			}

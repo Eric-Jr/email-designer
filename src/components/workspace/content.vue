@@ -8,7 +8,8 @@
 			:is="component.name"
 			draggable="true"
 			data-state="drag"
-			data-method="copy">
+			data-method="copy"
+			class="email-container">
 		</component>
 	</div>
 </template>
@@ -104,18 +105,13 @@ export default {
 			// clone element and store at root
 			this.$root.dragged = evt.target.querySelector('table').cloneNode(true);
 
-			// switch dragging flag to true
-			this.$root.dragging = true;
-
 			// show dropzones
-			document.querySelectorAll('*[data-state="drop"],*[data-state="append"]').forEach(function(dropzone) {
+			document.querySelectorAll('*[data-state="drop"]').forEach(function(dropzone) {
 				dropzone.classList.add('reveal');
 			});
 		},
 		ondragend : function(evt)
 		{
-			// this.target.removeAttribute('draggable');
-
 			// hide dropzones
 			document.querySelectorAll('*[data-state="drop"],*[data-state="append"]').forEach(function(dropzone) {
 				dropzone.classList.remove('reveal');
@@ -136,5 +132,39 @@ export default {
 </script>
 
 <style lang="scss">
-	
+	.email-container
+	{
+		& tr {
+			pointer-events: none;
+		}
+
+		@mixin reveal()
+		{
+			content: '[INSERT HERE]';
+			background: rgba(94, 194, 221, 1);
+			border: 4px dashed rgba(34, 77, 89, .5);
+			outline: 2px solid rgba(34, 77, 89, 1);
+			height: 30px;
+			color: rgb(34, 77, 89);
+			letter-spacing: 12px;
+			font-weight: 700;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		&.highlight-before
+		{
+			&:before {
+				@include reveal();
+			}
+		}
+
+		&.highlight-after
+		{
+			&:after {
+				@include reveal();
+			}
+		}
+	}
 </style>

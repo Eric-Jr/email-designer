@@ -55,8 +55,7 @@
 		{
 			ondragenter : function(evt)
 			{
-				if (evt.target.dataset.state === 'drop' ||
-					evt.target.dataset.state === 'append')
+				if (evt.target.dataset.state === 'drop')
 				{
 					// enables dropzones when dragging
 					evt.preventDefault();
@@ -64,23 +63,64 @@
 					// add highlights
 					evt.target.classList.add('highlight');
 				}
+
+				if (evt.target.getAttribute('class'))
+				{
+					if (evt.target.getAttribute('class').match(/email-container/g))
+					{
+						// enables dropzones when dragging
+						evt.preventDefault();
+
+						// check whether user is scrolling top or bottom half
+						if (evt.offsetY < evt.target.offsetHeight / 2)
+						{
+							evt.target.classList.add('highlight-before');
+						}
+						else
+						{
+							evt.target.classList.add('highlight-after');
+						}
+					}
+				}
 			},
 			ondragover : function(evt)
 			{
-				if (evt.target.dataset.state === 'drop' ||
-					evt.target.dataset.state === 'append')
+				if (evt.target.dataset.state === 'drop')
 				{
 					// enables dropzones when dragging
 					evt.preventDefault();
+				}
+
+				if (evt.target.getAttribute('class'))
+				{
+					if (evt.target.getAttribute('class').match(/email-container/g))
+					{
+						// enables dropzones when dragging
+						evt.preventDefault();
+
+						// check whether user is scrolling top or bottom half
+						if (evt.offsetY < evt.target.offsetHeight / 2)
+						{
+							evt.target.classList.remove('highlight-after');
+							evt.target.classList.add('highlight-before');
+						}
+						else
+						{
+							evt.target.classList.remove('highlight-before');
+							evt.target.classList.add('highlight-after');
+						}
+					}
 				}
 			},
 			ondragleave : function(evt)
 			{
 				if (evt.target.dataset.state === 'drop' ||
-					evt.target.dataset.state === 'append')
+					evt.target.getAttribute('class'))
 				{
 					// clear highlights
 					evt.target.classList.remove('highlight');
+					evt.target.classList.remove('highlight-before');
+					evt.target.classList.remove('highlight-after');
 				}
 			},
 			ondrop : function(evt)
@@ -92,9 +132,6 @@
 
 				// clear highlights
 				evt.target.classList.remove('highlight');
-
-				// create insertion point
-				let insertAfter = this.createInsertionPoint();
 
 				// grab coordinates for hovered element
 				vm.$root.dragged.addEventListener('mouseenter', function(evt)
@@ -115,7 +152,6 @@
 				{
 					// append elements
 					evt.target.appendChild(vm.$root.dragged);
-					evt.target.appendChild(insertAfter);
 
 					// Remove initial instructions
 					if (document.querySelector('.initial-display'))
@@ -124,36 +160,37 @@
 					}
 				}
 
-				if (evt.target.dataset.state === 'append')
+				if (evt.target.getAttribute('class'))
 				{
-					// append after target
-					if (evt.target.nextElementSibling)
+					if (evt.target.getAttribute('class').match(/email-container/g))
 					{
-						evt.target.parentNode.insertBefore(insertAfter, evt.target.nextElementSibling);
-						evt.target.parentNode.insertBefore(vm.$root.dragged, evt.target.nextElementSibling);
-					}
-					else
-					{
-						evt.target.parentNode.appendChild(vm.$root.dragged);
-						evt.target.parentNode.appendChild(insertAfter);
-					}
+						// clear highlights
+						evt.target.classList.remove('highlight-before');
+						evt.target.classList.remove('highlight-after');
+
+						// check whether user is scrolling top or bottom half
+						if (evt.offsetY < evt.target.offsetHeight / 2) {
+							// append after target
+							if (evt.target.previousElementSibling)
+							{
+								evt.target.parentNode.insertBefore(vm.$root.dragged, evt.target);
+							}
+						}
+						else
+						{
+							// append after target
+							if (evt.target.nextElementSibling)
+							{
+								evt.target.parentNode.insertBefore(vm.$root.dragged, evt.target.nextElementSibling);
+							}
+							else
+							{
+								evt.target.parentNode.appendChild(vm.$root.dragged);
+							}
+						}
+					};
 				}
 			},
-			createInsertionPoint : function()
-			{
-				// create insertion point for appends
-				let insertAfter = document.createElement('div');
-				insertAfter.dataset.state = 'append';
-				insertAfter.dataset.title = '[INSERT HERE]';
-
-				// attach event listeners
-				insertAfter.addEventListener('dragenter',this.ondragenter);
-				insertAfter.addEventListener('dragover',this.ondragover);
-				insertAfter.addEventListener('dragleave',this.ondragleave);
-				insertAfter.addEventListener('drop',this.ondrop);
-
-				return insertAfter;
-			}
 		},
 	}
 </script>
@@ -206,8 +243,8 @@
 		&.reveal
 		{
 			background: rgba(94, 194, 221, 1);
-		    border: 4px dashed rgba(34, 77, 89, .5);
-    		outline: 2px solid rgba(34, 77, 89, 1);
+			border: 4px dashed rgba(34, 77, 89, .5);
+			outline: 2px solid rgba(34, 77, 89, 1);
 			height: 30px;
 			color: rgb(34, 77, 89);
 			letter-spacing: 12px;
