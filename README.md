@@ -1,4 +1,4 @@
-# email-designer
+# Email Designer
 
 > A small application for creating emails. Based on the responsive [Cerberus Templates](https://tedgoas.github.io/Cerberus/).
 
