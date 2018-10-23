@@ -31,24 +31,24 @@ export default {
 	methods: {
 		resizeDrag : function(evt)
 		{
-			if (this.$root.resizeEl)
+			if (this.$root.$data.resizeEl)
 			{
 				const maxResize = window.innerWidth - 600;
 
-				if (this.$root.mouseDown &&
-					this.$root.resizeEl.offsetWidth <= maxResize) 
+				if (this.$root.$data.mouseDown &&
+					this.$root.$data.resizeEl.offsetWidth <= maxResize) 
 				{
-					this.$root.resizeEl.style.width = evt.pageX + 'px';
-					this.$root.resizeEl.style.flex = '0 0 auto';
-					this.setMinResize(this.$root.resizeEl);
-					this.setMaxResize(this.$root.resizeEl);
-					this.setMobileView(this.$root.resizeEl);
+					this.$root.$data.resizeEl.style.width = evt.pageX + 'px';
+					this.$root.$data.resizeEl.style.flex = '0 0 auto';
+					this.setMinResize(this.$root.$data.resizeEl);
+					this.setMaxResize(this.$root.$data.resizeEl);
+					this.setMobileView(this.$root.$data.resizeEl);
 				}
 			}
 		},
 		resizeEnd : function(evt)
 		{
-			this.$root.mouseDown = false;
+			this.$root.$data.mouseDown = false;
 		},
 		setMinResize : function(el)
 		{

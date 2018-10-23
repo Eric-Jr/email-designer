@@ -6,9 +6,10 @@
 					v-on:dragenter.native="ondragenter"
 					v-on:dragover.native="ondragover"
 					v-on:dragleave.native="ondragleave"
-					v-on:drop.native="ondrop"
+					v-on:drop.native.stop="ondrop"
 					data-state='drop'
-					style="width: 100%; background-color: #222222;" class="initial-display">
+					style="width: 100%; background-color: #222222;"
+					class="initial-display">
 				<!--[if mso | IE]>
 				<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #222222;">
 				<tr>
@@ -179,9 +180,6 @@
 			{
 				let vm = this;
 
-				// prevent event bubbling
-				evt.stopImmediatePropagation();
-
 				// clear highlights
 				evt.target.classList.remove('highlight');
 
@@ -189,8 +187,8 @@
 				{
 					// add to virtual dom tree
 					vm.$data.components.push({
-						el : vm.$root.dragged,
-						type : vm.$root.dragged.dataset.type,
+						el : vm.$root.$data.dragged,
+						type : vm.$root.$data.dragged.dataset.type,
 					});
 
 					// re-index vnode array
@@ -206,8 +204,8 @@
 			resizeStart : function(evt)
 			{
 				evt.stopImmediatePropagation();
-				this.$root.mouseDown = true;
-				this.$root.resizeEl = evt.target.parentNode;
+				this.$root.$data.mouseDown = true;
+				this.$root.$data.resizeEl = evt.target.parentNode;
 			},
 			showControls : function(evt)
 			{
@@ -227,63 +225,88 @@
 			insertComponent : function(evt)
 			{
 				let vm = this;
+				let vnode;
+
+				// grab id of drop zone
+				let id = Number(evt.target.dataset.id);
 
 				// clear highlights
 				evt.target.classList.remove('highlight-before');
 				evt.target.classList.remove('highlight-after');
 
-				// grab vnode id
-				let id = Number(evt.target.dataset.id);
-				let vnode;
-
 				// check whether user is scrolling top or bottom half
-				if (evt.offsetY < evt.target.offsetHeight / 2) {
-					if (vm.$root.dragged.dataset.method !== 'move')
+				if (evt.offsetY < evt.target.offsetHeight / 2)
+				{
+					switch (vm.$root.$data.dragged.dataset.method)
 					{
-						// append before target in virtual dom
-						vm.$data.components.splice(
-						id, // insert before this index
-						0, // don't delete any items in array
-						{
-							el : vm.$root.dragged,
-							type : vm.$root.dragged.dataset.type,
-						});
-					}
-					else
-					{
-						/*
-						** TODO:
-						** 	fix this shit
-						**/
-						// append before target in virtual dom
-						// let moveid = vm.$root.dragged.dataset.id;
-						// let cur = vm.$data.components[id];
-						// let tmp = cur;
+						case 'copy':
+							vnode = {
+								el : vm.$root.$data.dragged,
+								type : vm.$root.$data.dragged.dataset.type,
+							};
+						break;
 
-						// vm.$data.components[id] = vm.$data.components[moveid];
+						case 'move':
+							let moveid = Number(vm.$root.$data.dragged.dataset.id);
+							vnode = vm.$data.components[moveid];
+
+							// delete current vnode from array
+							vm.$data.components.splice(moveid, 1);
+						break;
 					}
+
+					// add vnode to virtual dom array
+					vm.$data.components.splice(id, 0, vnode);
 				}
 				else
 				{
 					// append after target
 					if (evt.target.nextElementSibling)
 					{
-						// add to virtual dom tree
-						vm.$data.components.splice(
-						id + 1, // insert after this index
-						0, // don't delete any items in array
+						switch (vm.$root.$data.dragged.dataset.method)
 						{
-							el : vm.$root.dragged,
-							type : vm.$root.dragged.dataset.type,
-						});
+							case 'copy':
+								vnode = {
+									el : vm.$root.$data.dragged,
+									type : vm.$root.$data.dragged.dataset.type,
+								};
+							break;
+							
+							case 'move':
+								let moveid = Number(vm.$root.$data.dragged.dataset.id);
+								vnode = vm.$data.components[moveid];
+
+								// delete current vnode from array
+								vm.$data.components.splice(moveid, 1);
+							break;
+						}
+
+						// add to vnode virtual dom tree
+						vm.$data.components.splice(id + 1, 0, vnode);
 					}
 					else
 					{
-						// add to virtual dom tree
-						vm.$data.components.push({
-							el : vm.$root.dragged,
-							type : vm.$root.dragged.dataset.type,
-						});
+						switch (vm.$root.$data.dragged.dataset.method)
+						{
+							case 'copy':
+								// add to virtual dom tree
+								vm.$data.components.push({
+									el : vm.$root.$data.dragged,
+									type : vm.$root.$data.dragged.dataset.type,
+								});
+							break;
+						
+							case 'move':
+								let moveid = Number(vm.$root.$data.dragged.dataset.id);
+								vnode = vm.$data.components[moveid];
+
+								// delete current vnode from array
+								vm.$data.components.splice(moveid, 1);
+
+								// move vnode to new position
+								vm.$data.components.push(vnode);
+							break;
+						}
 					}
 				}
 

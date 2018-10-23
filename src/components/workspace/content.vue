@@ -107,7 +107,7 @@ export default {
 			}
 
 			// clone element and store at root
-			this.$root.dragged = evt.target.cloneNode(true);
+			this.$root.$data.dragged = evt.target.cloneNode(true);
 			this.$parent.$children.push(this);
 
 			// show dropzones

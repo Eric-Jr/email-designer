@@ -3,7 +3,7 @@
 		<span 
 			v-on:dragstart="moveStart"
 			v-on:dragend="moveEnd"
-			data-state="move" draggable="true">Move</span>
+			data-method="move" draggable="true">Move</span>
 		<span
 			v-on:click="editBlock"
 		>Edit</span>
@@ -23,7 +23,7 @@
 		methods :
 		{
 			moveStart : function(evt) {
-				this.$root.dragged = evt.target.parentNode.parentNode;
+				this.$root.$data.dragged = evt.target.parentNode.parentNode;
 
 				let dt = evt.dataTransfer;
 
@@ -32,7 +32,7 @@
 					// removes ghost image on cursor (Firefox/Chrome)
 					dt.setDragImage(new Image(), 0, 0);
 
-					// initiates drag events (Firefox only)
+					// initiates drag events (Firefox)
 					dt.setData('key', '');
 				}
 
@@ -60,10 +60,7 @@
 				let id = evt.target.parentNode.parentNode.dataset.id;
 
 				// remove vnode from virtual dom
-				vm.$parent.$data.components.splice(
-					id, // select vnode index
-					1, // delete only this node
-				);
+				vm.$parent.$data.components.splice(id, 1);
 
 				// re-index vnode array
 				vm.$parent.reIndex();
