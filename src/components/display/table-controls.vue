@@ -50,7 +50,13 @@
 			},
 			editBlock : function(evt)
 			{
-				
+				// switch to settings tab
+				this.$root.$children[0].$children[1].$data.currentTab = 'settings';
+
+				let content = this.$parent.$data.components[this.$data.editId].content;
+
+				// assign component content property
+				this.$root.$data.editorContent = content;
 			},
 			deleteBlock : function(evt)
 			{

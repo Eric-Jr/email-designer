@@ -2,11 +2,11 @@
 	<section id="displayarea">
 		<div class="inner">
 			<div width="100%" style="margin: 0; padding: 0 !important; mso-line-height-rule: exactly; background-color: #222222;">
-				<email-display 
-					v-on:dragenter.native="ondragenter"
-					v-on:dragover.native="ondragover"
-					v-on:dragleave.native="ondragleave"
-					v-on:drop.native.stop="ondrop"
+				<center 
+					v-on:dragenter="ondragenter"
+					v-on:dragover="ondragover"
+					v-on:dragleave="ondragleave"
+					v-on:drop.stop="ondrop"
 					data-state='drop'
 					style="width: 100%; background-color: #222222;"
 					class="initial-display">
@@ -30,19 +30,18 @@
 					<!-- Preview Text Spacing Hack : END -->
 					
 					<!-- BEGIN : Render Email Components -->
-					<div v-if="this.$data.components[0]">
-						<component 
+					<div v-if="this.$data.components != []">
+						<table 
 							v-for="component in this.$data.components"
-							v-on:mouseenter.native="showControls"
-							v-on:mouseleave.native="hideControls"
-							v-on:drop.native="insertComponent"
+							v-on:mouseenter="showControls"
+							v-on:mouseleave="hideControls"
+							v-on:drop="insertComponent"
+							v-html="component.content"
 							:key="'email-component-'+component.id"
 							:data-id="component.id"
 							:data-type="component.type"
-							:is="component.type"
-							class="email-container"
-							data-method="move">
-						</component>
+							data-method="move" align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto;" class="email-container">
+						</table>
 					</div>
 					<!-- END : Render Email Components -->
 
@@ -51,7 +50,7 @@
 				</tr>
 				</table>
 				<![endif]-->
-				</email-display>
+				</center>
 			</div>
 			<table-controls></table-controls>
 		</div>
@@ -83,16 +82,6 @@
 		components : 
 		{
 			TableControls,
-			EmailDisplay :
-			{
-				render : function(createElement)
-				{
-					return createElement(
-						'center',
-						this.$slots.default
-					);
-				}
-			},
 			EmailHeader,
 			HeroImage,
 			OneColumnTextButton,
@@ -187,7 +176,7 @@
 				{
 					// add to virtual dom tree
 					vm.$data.components.push({
-						el : vm.$root.$data.dragged,
+						content : vm.$root.$data.dragged.outerHTML,
 						type : vm.$root.$data.dragged.dataset.type,
 					});
 
@@ -211,16 +200,17 @@
 			{
 				let vm = this;
 				evt.target.style.position = 'relative';
-				evt.target.appendChild(vm.$children[1].$el);
+				evt.target.appendChild(vm.$children[0].$el);
 				vm.hovered = this;
-				vm.$children[1].$el.style.display = 'flex';
+				vm.$children[0].$el.style.display = 'flex';
+				vm.$children[0].$data.editId = evt.target.dataset.id;
 			},
 			hideControls : function(evt)
 			{
 				let vm = this;
-				vm.$children[1].$el.style.display = 'none';
+				vm.$children[0].$el.style.display = 'none';
 				evt.target.style.position = '';
-				vm.$el.appendChild(vm.$children[1].$el);
+				vm.$el.appendChild(vm.$children[0].$el);
 			},
 			insertComponent : function(evt)
 			{
@@ -241,7 +231,7 @@
 					{
 						case 'copy':
 							vnode = {
-								el : vm.$root.$data.dragged,
+								content : vm.$root.$data.dragged.outerHTML,
 								type : vm.$root.$data.dragged.dataset.type,
 							};
 						break;
@@ -267,7 +257,7 @@
 						{
 							case 'copy':
 								vnode = {
-									el : vm.$root.$data.dragged,
+									content : vm.$root.$data.dragged.outerHTML,
 									type : vm.$root.$data.dragged.dataset.type,
 								};
 							break;
@@ -291,7 +281,7 @@
 							case 'copy':
 								// add to virtual dom tree
 								vm.$data.components.push({
-									el : vm.$root.$data.dragged,
+									content : vm.$root.$data.dragged.outerHTML,
 									type : vm.$root.$data.dragged.dataset.type,
 								});
 							break;
@@ -318,8 +308,7 @@
 				this.$data.components.forEach(function(component,key)
 				{
 					component.id = key;
-					component.el.dataset.id = key;
-				})
+				});
 			}
 		},
 	}

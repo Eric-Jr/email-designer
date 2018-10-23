@@ -5,16 +5,17 @@
 			:key="component.name"
 			class="email-component">
 			<h2>{{ component.fullname }}</h2>
-			<component 
-				v-on:dragstart.native="ondragstart"
-				v-on:dragend.native="ondragend"
+			<table 
+				v-on:dragstart="ondragstart"
+				v-on:dragend="ondragend"
 				:key="component.name"
 				:data-type="component.name"
-				:is="component.name"
 				draggable="true"
 				data-state="drag"
-				data-method="copy">
-			</component>
+				data-method="copy"
+				align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto;" class="email-container">
+				<component :is="component.name"></component>
+			</table>
 		</div>
 	</div>
 </template>
@@ -108,7 +109,6 @@ export default {
 
 			// clone element and store at root
 			this.$root.$data.dragged = evt.target.cloneNode(true);
-			this.$parent.$children.push(this);
 
 			// show dropzones
 			document.querySelectorAll('*[data-state="drop"]').forEach(function(dropzone) {
