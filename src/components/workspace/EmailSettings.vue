@@ -58,7 +58,6 @@
 		.slider
 		{
 			width: 100%;
-			background: rgba(130,130,130,1);
 
 			&:hover {
 				cursor: pointer;
