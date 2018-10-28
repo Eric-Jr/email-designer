@@ -14,61 +14,30 @@
 				class="inner">
 			</component>
 		</keep-alive>
-		<nav></nav>
 	</section>
 </template>
 
 <script>
-	import WorkSpaceContent from './content'
-	import WorkSpaceSettings from './settings'
-	import WorkSpaceSocial from './social'
+	import EmailStructure from './EmailStructure'
+	import EmailSettings from './EmailSettings'
+	import EmailContent from './EmailContent'
 
 	export default {
 		data () {
 			return {
-				currentTab: 'content',
-				tabs: ['settings','content','social'],
-				color: 'inherit',
+				currentTab: 'structure',
+				tabs: ['settings','structure','content'],
 			}
 		},
 		components:
 		{
-			WorkSpaceContent :
-			{
-				render : function(createElement)
-				{
-					return createElement(
-						WorkSpaceContent,
-						{
-							style: {
-								color: this.$parent.$data.color
-							}
-						},
-					)
-				},
-			},
-			WorkSpaceSettings :
-			{
-				render : function(createElement)
-				{
-					return createElement(
-						WorkSpaceSettings,
-					)
-				},
-			},
-			WorkSpaceSocial :
-			{
-				render : function(createElement)
-				{
-					return createElement(
-						WorkSpaceSocial,
-					)
-				},
-			},
+			EmailSettings,
+			EmailStructure,
+			EmailContent,
 		},
 		computed: {
 			currentTabComponent: function() {
-				return 'work-space-' + this.currentTab.toLowerCase();
+				return 'email-' + this.currentTab.toLowerCase();
 			}
 		}
 	}
@@ -87,6 +56,7 @@
 	.inner {
 		max-height: 100%;
 		height: 100%;
+		padding: 20px;
 		overflow-y: scroll;
 		overflow-x: hidden;
 		position: relative;
@@ -132,10 +102,6 @@
 		margin-bottom: 15px;
 		transition: 0.2s all;
 		position: relative;
-
-		& * {
-			pointer-events: none;
-		}
 
 		&:before {
 			content: '';

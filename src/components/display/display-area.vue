@@ -9,7 +9,7 @@
 					v-on:drop.stop="ondrop"
 					data-state='drop'
 					style="width: 100%; background-color: #222222;"
-					class="initial-display">
+				>
 				<!--[if mso | IE]>
 				<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #222222;">
 				<tr>
@@ -29,21 +29,56 @@
 					</div>
 					<!-- Preview Text Spacing Hack : END -->
 					
-					<!-- BEGIN : Render Email Components -->
-					<div v-if="this.$data.components != []">
-						<table 
-							v-for="component in this.$data.components"
-							v-on:mouseenter="showControls"
-							v-on:mouseleave="hideControls"
-							v-on:drop="insertComponent"
-							v-html="component.content"
-							:key="'email-component-'+component.id"
-							:data-id="component.id"
-							:data-type="component.type"
-							data-method="move" align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="margin: 0 auto;" class="email-container">
-						</table>
+					<div
+					v-if="this.components.length === 0"
+					style="
+					color: #787878;
+					font-size: 2em;
+					font-family: sans-serif;
+					display: -webkit-box;
+					display: -ms-flexbox;
+					display: flex;
+					-webkit-box-pack: center;
+					-ms-flex-pack: center;
+					justify-content: center;
+					-webkit-box-align: center;
+					-ms-flex-align: center;
+					align-items: center;
+					height: 100%;
+					width: 100%;
+					position: absolute;
+					top: 0;
+					left: 0;
+					"
+					>
+						Drag Blocks Here To Start
 					</div>
-					<!-- END : Render Email Components -->
+					
+					<table
+					align="center"
+					role="presentation"
+					cellspacing="0"
+					cellpadding="0"
+					border="0"
+					class="email-container"
+					style="margin: 0 auto;"
+					:width="this.$root.$children[0].$data.emailwidth"
+					>
+						<!-- BEGIN : Render Email Components -->
+						<template v-if="this.components.length !== 0">
+							<tr
+							v-for="component in this.components"
+							:key="'email-component-' + component.id"
+							>
+								<component
+								:data-id="component.id"
+								:data-type="component.type" 
+								:is="component.type"
+								></component>
+							</tr>
+						</template>
+						<!-- END : Render Email Components -->
+					</table>
 
 				<!--[if mso | IE]>
 				</td>
@@ -52,7 +87,6 @@
 				<![endif]-->
 				</center>
 			</div>
-			<table-controls></table-controls>
 		</div>
 		<span 
 			v-on:mousedown.stop="resizeStart"
@@ -62,46 +96,40 @@
 
 <script>
 	import TableControls from './table-controls'
-	import EmailHeader from '../email-components/email-header'
-	import HeroImage from '../email-components/hero-image'
-	import OneColumnTextButton from '../email-components/one-column-text-button'
-	import BackgroundImageText from '../email-components/background-image-text'
-	import TwoEvenColumns from '../email-components/two-even-columns'
-	import ThreeEvenColumns from '../email-components/three-even-columns'
-	import ThumbnailLeftTextRight from '../email-components/thumbnail-left-text-right'
-	import ThumbnailRightTextLeft from '../email-components/thumbnail-right-text-left'
-	import OneColumnText from '../email-components/one-column-text'
-	import ClearSpacer from '../email-components/clear-spacer'
+	import OneColumn from '../email-components/OneColumn'
+	import TwoColumnEven from '../email-components/TwoColumnEven'
+	import ThreeColumnEven from '../email-components/ThreeColumnEven'
+	import TwoColumn2080 from '../email-components/TwoColumn2080'
+	import TwoColumn8020 from '../email-components/TwoColumn8020'
 
 	export default {
 		data () {
 			return {
 				components : [],
+				emailwidth : 600,
 			}
 		},
 		components : 
 		{
 			TableControls,
-			EmailHeader,
-			HeroImage,
-			OneColumnTextButton,
-			BackgroundImageText,
-			TwoEvenColumns,
-			ThreeEvenColumns,
-			ThumbnailLeftTextRight,
-			ThumbnailRightTextLeft,
-			OneColumnText,
-			ClearSpacer,
+			OneColumn,
+			TwoColumnEven,
+			ThreeColumnEven,
+			TwoColumn2080,
+			TwoColumn8020,
 		},
 		methods : 
 		{
-			ondragenter : function(evt)
+			showEvent : function (evt)
 			{
+				console.log(evt);
+			},
+			ondragenter : function (evt)
+			{
+				evt.preventDefault();
+
 				if (evt.target.dataset.state === 'drop')
 				{
-					// enables dropzones when dragging
-					evt.preventDefault();
-
 					// add highlights
 					evt.target.classList.add('highlight');
 				}
@@ -111,45 +139,41 @@
 					if (evt.target.getAttribute('class').match(/email-container/g))
 					{
 						// enables dropzones when dragging
-						evt.preventDefault();
+						// evt.preventDefault();
 
 						// check whether user is scrolling top or bottom half
 						if (evt.offsetY < evt.target.offsetHeight / 2)
 						{
-							evt.target.classList.add('highlight-before');
+							// evt.target.classList.add('highlight-before');
 						}
 						else
 						{
-							evt.target.classList.add('highlight-after');
+							// evt.target.classList.add('highlight-after');
 						}
 					}
 				}
 			},
 			ondragover : function(evt)
 			{
-				if (evt.target.dataset.state === 'drop')
-				{
-					// enables dropzones when dragging
-					evt.preventDefault();
-				}
+				evt.preventDefault();
 
 				if (evt.target.getAttribute('class'))
 				{
 					if (evt.target.getAttribute('class').match(/email-container/g))
 					{
 						// enables dropzones when dragging
-						evt.preventDefault();
+						// evt.preventDefault();
 
-						// check whether user is scrolling top or bottom half
+						// check whether user is hovering on top or bottom half
 						if (evt.offsetY < evt.target.offsetHeight / 2)
 						{
-							evt.target.classList.remove('highlight-after');
-							evt.target.classList.add('highlight-before');
+							// evt.target.classList.remove('highlight-after');
+							// evt.target.classList.add('highlight-before');
 						}
 						else
 						{
-							evt.target.classList.remove('highlight-before');
-							evt.target.classList.add('highlight-after');
+							// evt.target.classList.remove('highlight-before');
+							// evt.target.classList.add('highlight-after');
 						}
 					}
 				}
@@ -172,22 +196,17 @@
 				// clear highlights
 				evt.target.classList.remove('highlight');
 
-				if (evt.target.dataset.state === 'drop')
+				if (vm.$root.$data.dragged)
 				{
 					// add to virtual dom tree
 					vm.$data.components.push({
-						content : vm.$root.$data.dragged.outerHTML,
-						type : vm.$root.$data.dragged.dataset.type,
+						type : vm.$root.$data.dragged,
 					});
 
 					// re-index vnode array
-					this.reIndex();
+					this.reIndex(this);
 
-					// Remove initial instructions
-					if (document.querySelector('.initial-display'))
-					{
-						document.querySelector('.initial-display').classList.remove('initial-display');
-					}
+					vm.$root.$data.dragged = false;
 				}
 			},
 			resizeStart : function(evt)
@@ -195,22 +214,6 @@
 				evt.stopImmediatePropagation();
 				this.$root.$data.mouseDown = true;
 				this.$root.$data.resizeEl = evt.target.parentNode;
-			},
-			showControls : function(evt)
-			{
-				let vm = this;
-				evt.target.style.position = 'relative';
-				evt.target.appendChild(vm.$children[0].$el);
-				vm.hovered = this;
-				vm.$children[0].$el.style.display = 'flex';
-				vm.$children[0].$data.editId = evt.target.dataset.id;
-			},
-			hideControls : function(evt)
-			{
-				let vm = this;
-				vm.$children[0].$el.style.display = 'none';
-				evt.target.style.position = '';
-				vm.$el.appendChild(vm.$children[0].$el);
 			},
 			insertComponent : function(evt)
 			{
@@ -301,11 +304,11 @@
 				}
 
 				// re-index vnode array
-				this.reIndex();
+				this.reIndex(this);
 			},
-			reIndex : function()
+			reIndex : function(vm)
 			{
-				this.$data.components.forEach(function(component,key)
+				vm.components.forEach(function(component,key)
 				{
 					component.id = key;
 				});
@@ -449,7 +452,6 @@
 		div[data-method="move"]
 		{
 			@include blockControls();
-
 			&:hover {
 				cursor: move;
 			}

@@ -25,12 +25,14 @@ export default {
 	},
 	data () {
 		return {
-
+			emailwidth : 600,
 		}
 	},
 	methods: {
 		resizeDrag : function(evt)
 		{
+			this.$root.$data.pageX = evt.pageX;
+			
 			if (this.$root.$data.resizeEl)
 			{
 				const maxResize = window.innerWidth - 600;

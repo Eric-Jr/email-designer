@@ -14,7 +14,7 @@
 		data () {
 			return {
 				currentTab: 'content',
-				tabs: ['settings','content','social']
+				tabs: ['settings','structure','content']
 			}
 		},
 		computed: {
