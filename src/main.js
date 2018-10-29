@@ -5,7 +5,6 @@ import App from './App'
 import router from './router'
 import upperFirst from 'lodash/upperFirst'
 import camelCase from 'lodash/camelCase'
-import TableControls from './components/display/table-controls'
 
 const requireComponent = require.context(
 	// The relative path of the components folder

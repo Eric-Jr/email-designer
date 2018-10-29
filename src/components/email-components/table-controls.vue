@@ -1,15 +1,18 @@
 <template>
 	<div class="tab-controls">
 		<span 
-			v-on:dragstart="moveStart"
-			v-on:dragend="moveEnd"
-			data-method="move" draggable="true">Move</span>
-		<span
-			v-on:click="editBlock($event,$vnode)"
-		>Edit</span>
-		<span
-			v-on:click="deleteBlock"
-		>Delete</span>
+		v-on:dragstart="moveStart"
+		v-on:dragend="moveEnd"
+		data-method="move" draggable="true"
+		>
+			Move
+		</span>
+		<span v-on:click="editBlock($event,$vnode)">
+			Edit
+		</span>
+		<span v-on:click="deleteBlock">
+			Delete
+		</span>
 	</div>
 </template>
 
@@ -31,7 +34,6 @@
 				{
 					// removes ghost image on cursor (Firefox/Chrome)
 					dt.setDragImage(new Image(), 0, 0);
-
 					// initiates drag events (Firefox)
 					dt.setData('key', '');
 				}
@@ -50,23 +52,25 @@
 			},
 			editBlock : function(evt,node)
 			{
-				// switch to settings tab
-				this.$root.$children[0].$children[1].$data.currentTab = 'settings';
-				// add node reference to app
-				node.context.$root.$children[0].$data.editNode = node;
+				if (!(this.$root.$children[0].$children[1].$data.currentTab === 'settings'))
+				{
+					// switch to settings tab
+					this.$root.$children[0].$children[1].$data.currentTab = 'settings';
+				}
+				// store reference in root data
+				node.context.$root.$children[0].$data.editNode = {
+					vnode 	: node.context.$vnode,
+					context : node.context,
+					data 	: node.context.$data,
+				};
 			},
 			deleteBlock : function(evt)
 			{
 				let vm = this;
-
 				// grab currently evaluated table
 				let id = evt.target.parentNode.parentNode.dataset.id;
-
 				// remove vnode from virtual dom
 				vm.$parent.$data.components.splice(id, 1);
-
-				// re-index vnode array
-				vm.$parent.reIndex();
 			}
 		}
 	}

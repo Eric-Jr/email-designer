@@ -26,6 +26,7 @@ export default {
 	data () {
 		return {
 			emailwidth : 600,
+			editNode : false,
 		}
 	},
 	methods: {

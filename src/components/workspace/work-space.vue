@@ -8,12 +8,10 @@
 				v-on:click="currentTab = tab"
 			>{{ tab }}</button>
 		</div>
-		<keep-alive>
-			<component 
-				v-bind:is="currentTabComponent"
-				class="inner">
-			</component>
-		</keep-alive>
+		<component 
+			v-bind:is="currentTabComponent"
+			class="inner">
+		</component>
 	</section>
 </template>
 

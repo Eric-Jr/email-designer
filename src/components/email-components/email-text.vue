@@ -1,7 +1,7 @@
 <template>
 	<div ref="email-text" style="height: 100%;">
 		<table-controls></table-controls>
-		<p>{{ this.$data.content }}</p>
+		<p>{{ this.$data.textcontent }}</p>
 	</div>
 </template>
 
@@ -9,7 +9,7 @@
 	export default {
 		data () {
 			return {
-				content : 'type some text',
+				textcontent : 'type some text',
 			}
 		},
 	}

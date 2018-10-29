@@ -13,7 +13,7 @@
 					v-for="component in components"
 					v-on:mouseenter.native.stop="showControls($event)"
 					v-on:mouseleave.native.stop="hideControls($event)"
-					:key="component.type"
+					:key="component.type + '-' + component.id"
 					:is="component.type"
 					style="position: relative;"
 					>
@@ -59,7 +59,6 @@
 						});
 					break;
 				}
-
 				this.$root.$data.dragged = false;
 				vm.$parent.reIndex(vm);
 			},
