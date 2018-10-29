@@ -11,10 +11,8 @@
 				:value="this.$root.$children[0].$data.emailwidth"
 				class="slider">
 		</div>
-		<template v-if="this.$root.$children[0].$data.editNode">
-			<textarea ref="textarea" style="width: 100%;" v-model="text"></textarea>
-			<button v-on:click="updateText($event)">Update</button>
-		</template>
+		<textarea ref="textarea" style="width: 100%;" v-model="text"></textarea>
+		<button v-on:click="updateText($event)">Update</button>
 	</div>
 </template>
 
@@ -33,7 +31,10 @@
 			},
 			updateText : function (evt)
 			{
-				this.$root.$children[0].$data.editNode.context.content = this.text;
+				if (this.$root.$children[0].$data.editNode)
+				{
+					this.$root.$children[0].$data.editNode.context.content = this.text;
+				}
 			}
 		},
 		directives :
